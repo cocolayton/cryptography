@@ -63,11 +63,53 @@ def decrypt_caesar(ciphertext, offset):
 
         return decrypted_string
 
+#######################################################################################################
 # Vigenere Cipher
 # Arguments: string, string
 # Returns: string
+
+def get_new_letter_index(text_char, key_char):
+    alphabet = string.ascii_uppercase
+
+    text_char_index = alphabet.find(text_char)
+    key_char_index = alphabet.find(key_char)
+
+    encrypted_char_index = code_char_index + key_char_index
+
+    return encrypted_char_index
+
+
+def get_encrypted_letter(encrypted_char_index):
+    alphabet = string.ascii_uppercase
+    if encrypted_char_index < 24:
+        return alphabet[encrypted_char_index]
+    else:
+        wrapped_index = encrypted_char_index - 25 #subtract 25 not 24 because index starts at zero
+        return alphabet[wrapped_index]
+
+
 def encrypt_vigenere(plaintext, keyword):
-    pass
+    key_index = 0
+    encrypted_text = ""
+
+    for index in range len(plaintext):
+        text_char = plaintext[index]
+
+        if key_index < len(keyword)
+            key_char = keyword[key_index]
+            key_index += 1
+        else:
+            key_index = 0
+            key_char = keyword[key_index]
+            key_index += 1
+
+        encrypted_char_index = get_new_letter(text_char, key_char)
+        encrypted_letter = get_encrypted_letter(encrypted_char_index)
+        encrypted_text = encrypted_text + encrypted_letter
+
+
+    return encrypted_text
+
 
 # Arguments: string, string
 # Returns: string
