@@ -218,20 +218,84 @@ def create_public_key(private_key):
     W, Q, R, B = get_key_elements()
     public_key = B
 
-# Arguments: string, tuple (W, Q, R)
+
+def get_cipher_character(binary_list, n=8):
+    priv_key = generate_private_key()
+    B = create_public_key(priv_key)
+    C = 0
+
+    for num in range(n):
+        C = C + (B[num] * binary_list[num])
+
+
+    return C
+
+
+# Arguments: string, tuple B
 # Returns: list of integers
 def encrypt_mhkc(plaintext, public_key):
-    pass
+    encryption = []
+    for letter in plaintext:
+        ascii_value = ord(letter)
+        binary = binascii.a2b_uu(ascii_value)
+        C = get_cipher_character(binary)
+        encryption.append(C)
 
-# Arguments: list of integers, tuple B - a length-n tuple of integers
+    return encryption
+
+
+def get_C_prime(R, Q, ciphertext, n = 8):
+    S = (1/R)%Q
+    c_prime = ciphertext*S%Q
+    return c_prime
+
+def get_W_values(c_prime, W):
+    indices_list = []
+    target = c_prime
+
+    for index in range(n):
+        if W[index] <= target:
+            indices_list.append(index)
+
+        target = target - W[index]
+
+        if target <= 0:
+            return W_sum
+
+# Arguments: list of integers, private key (W, Q, R) with W a tuple
 # Returns: bytearray or str of plaintext
-def decrypt_mhkc(ciphertext, private_key):
-    pass
+def decrypt_mhkc(ciphertext, private_key, n = 8):
+    decryption_bytes = []
+
+    W = private_key[0]
+    Q = private_key[1]
+    R = private_key[2]
+
+    for value in ciphertext:
+        c_prime = get_C_prime(R, Q, value)
+        indicies_list = get_W_values(c_prime, W)
+        ascii_num = 0
+        
+        for index in indicies_list:
+            ascii_num = ascii_num + 2**(n-index)
+
+        decryption_bytes.append(ascii_num)
+
+    return decryption_bytes
+
+
+    """
+    Extra W, Q, and R from the private key
+Compute modular inverse S such that R*S mod Q == 1 using Euclidean algorithm
+For each character C in the ciphertext, compute C’ = C * S mod Q
+Solve the subset sum problem on C’ by identifying which indices of W sum to C' (use the greedy algorithm described above)
+Use those indices of W to get back the ascii value of the encrypted character.
+    """
 
 def main():
     # Testing code here
     # WHAT IF GIVEN A BLANK STRING?????
-    pass
+    
 
 if __name__ == "__main__":
     main()
