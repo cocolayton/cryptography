@@ -1,6 +1,8 @@
 # Caesar Cipher
 # Arguments: string, integer
 # Returns: string
+import string
+import binascii
 
 def get_offset_letters(offset_num, alphabet):
     # dictionary that will hold the shifted value of each letter in the alphabet given an offset number
@@ -9,11 +11,11 @@ def get_offset_letters(offset_num, alphabet):
     #range represents letters that will not need to loop (ie if offset is 3 the go up to range 22)
     range_for_first_loop = 26-offset_num
     for index in range(range_for_first_loop):
-        offset_letters[alphabet[index]] = alphabet[index + index]
+        offset_letters[alphabet[index]] = alphabet[index + offset_num]
 
     # letters that need to loop back to the front of the alphabet
     for index in range(offset_num):
-        offset_letters[alphabet[range_for_first_loop] + index] = alphabet[index]
+        offset_letters[alphabet[range_for_first_loop+index]] = alphabet[index] #CHANGE THIS SO THAT INDEX GOES FROM BIG TO SMALL
 
     return offset_letters
 
@@ -46,8 +48,8 @@ def decrypt_caesar(ciphertext, offset):
     offset_letters = get_offset_letters(offset, alphabet)
 
     # these lists will be used to get the key in the dictionary from a value (ie correct letter from the given encoded letter)
-    key_list = list(my_dict.keys()) 
-    val_list = list(my_dict.values()) 
+    key_list = list(offset_letters.keys()) 
+    val_list = list(offset_letters.values()) 
   
 
     decrypted_string = ""
@@ -79,29 +81,10 @@ def get_new_encrypted_letter_index(text_char, key_char):
 
 def get_encrypted_letter(encrypted_char_index):
     alphabet = string.ascii_uppercase
-    if encrypted_char_index < 24:
+    if encrypted_char_index <= 25: # reason why it was < 24?
         return alphabet[encrypted_char_index]
     else:
-        wrapped_index = encrypted_char_index - 26 #subtract 25 not 24 because index starts at zero
-        return alphabet[wrapped_index]
-
-
-def get_new_decrypted_letter_index(cipher_char, key_char):
-    alphabet = string.ascii_uppercase
-
-    cipher_char_index = alphabet.find(cipher_char)
-    key_char_index = alphabet.find(key_char)
-
-    decrypted_char_index = key_char_index - cipher_char_index
-
-
-def get_decrypted_letter(decrypted_char_index):
-    alphabet = string.ascii_uppercase
-
-    if decrypted_char_index > 0:
-        return alphabet[decrypted_char_index]
-    else:
-        wrapped_index = 26 - decrypted_char_index
+        wrapped_index = encrypted_char_index - 26
         return alphabet[wrapped_index]
 
 # Arguments: string, string
@@ -110,10 +93,10 @@ def encrypt_vigenere(plaintext, keyword):
     key_index = 0
     encrypted_text = ""
 
-    for index in range len(plaintext):
+    for index in range (len(plaintext)):
         text_char = plaintext[index]
 
-        if key_index < len(keyword)
+        if key_index < (len(keyword)):
             key_char = keyword[key_index]
             key_index += 1
         else:
@@ -129,16 +112,37 @@ def encrypt_vigenere(plaintext, keyword):
     return encrypted_text
 
 
+def get_new_decrypted_letter_index(cipher_char, key_char):
+    alphabet = string.ascii_uppercase
+
+    cipher_char_index = alphabet.find(cipher_char)
+    key_char_index = alphabet.find(key_char)
+
+    decrypted_char_index = cipher_char_index - key_char_index
+
+    return decrypted_char_index
+
+
+def get_decrypted_letter(decrypted_char_index):
+    alphabet = string.ascii_uppercase
+
+    if decrypted_char_index >= 0:
+        return alphabet[decrypted_char_index]
+    else:
+        wrapped_index = 26 + decrypted_char_index # add because decrypted_char_index will be negative
+        return alphabet[wrapped_index]
+
+
 # Arguments: string, string
 # Returns: string
 def decrypt_vigenere(ciphertext, keyword):
     key_index = 0
-    encrypted_text = ""
+    decrypted_text = ""
 
-    for index in range len(ciphertext):
+    for index in range(len(ciphertext)):
         cipher_char = ciphertext[index]
 
-        if key_index < len(keyword)
+        if key_index < (len(keyword)):
             key_char = keyword[key_index]
             key_index += 1
         else:
@@ -163,7 +167,7 @@ def get_W(n=8):
     
     count = 1 # going to add 8 numbers
 
-    for count < n:
+    while count < n:
         # get total of numbers in the list so far
         total = 0
         for num in W:
@@ -192,41 +196,36 @@ def get_R(Q):
 
 def get_B(W, Q, R):
     B = []
-
+    
     for num in W:
         B.append(R*num%Q)
 
     return tuple(B)
 
-def get_key_elements():
-    W = get_W()
-    Q = get_Q(W)
-    R = get_R(Q)
-    B = get_B(W, Q, R)
-
-    return (W, Q, R, B)
-
 # Arguments: integer
 # Returns: tuple (W, Q, R) - W a length-n tuple of integers, Q and R both integers
 def generate_private_key(n=8):
-    W, Q, R, B = get_key_elements()
+    W = get_W()
+    Q = get_Q(W)
+    R = get_R(Q)
     private_key = (W, Q, R)
 
 # Arguments: tuple (W, Q, R) - W a length-n tuple of integers, Q and R both integers
 # Returns: tuple B - a length-n tuple of integers
 def create_public_key(private_key):
-    W, Q, R, B = get_key_elements()
+    W = private_key[0]
+    Q = private_key[1]
+    R = private_key[2]
+
+    B = get_B(W, Q, R)
     public_key = B
 
 
-def get_cipher_character(binary_list, n=8):
-    priv_key = generate_private_key()
-    B = create_public_key(priv_key)
+def get_cipher_num(binary_list, public_key):
     C = 0
 
-    for num in range(n):
-        C = C + (B[num] * binary_list[num])
-
+    for num in (range(len(binary_list))): # binary list bc if binary length != key length then the binary will just be zero
+        C = C + (public_key[num] * binary_list[num])
 
     return C
 
@@ -237,8 +236,11 @@ def encrypt_mhkc(plaintext, public_key):
     encryption = []
     for letter in plaintext:
         ascii_value = ord(letter)
-        binary = binascii.a2b_uu(ascii_value)
-        C = get_cipher_character(binary)
+        binary = format(ascii_value, '08b') # this is a string
+
+        binary_list = [int(x) for x in binary]
+
+        C = get_cipher_num(binary_list, public_key)
         encryption.append(C)
 
     return encryption
@@ -284,17 +286,30 @@ def decrypt_mhkc(ciphertext, private_key, n = 8):
     return decryption_bytes
 
 
-    """
-    Extra W, Q, and R from the private key
-Compute modular inverse S such that R*S mod Q == 1 using Euclidean algorithm
-For each character C in the ciphertext, compute C’ = C * S mod Q
-Solve the subset sum problem on C’ by identifying which indices of W sum to C' (use the greedy algorithm described above)
-Use those indices of W to get back the ascii value of the encrypted character.
-    """
-
 def main():
     # Testing code here
     # WHAT IF GIVEN A BLANK STRING?????
+
+    #Testing Cesear
+    #encrypt = encrypt_caesar("ABC", 20)
+    #decrypt = decrypt_caesar(encrypt, 20)
+    #print(decrypt, encrypt)
+
+    #Testing vingeere
+    #ciphertext = encrypt_vigenere("A", "ONEINPUT")
+    #decrypted = decrypt_vigenere(ciphertext, "ONEINPUT")
+    #print(decrypted, ciphertext)
+
+    #testing last one
+
+    plaintext = ""
+    public_key = (10, 20, 56, 118, 288, 618, 1376, 4826)
+    private_key = ((5, 10, 28, 59, 144, 309, 688, 2413), 5575, 2)
+    encrypt = encrypt_mhkc(plaintext, public_key)
+    decrypt = (encrypt, private_key)
+
+    print(encrypt)
+
     
 
 if __name__ == "__main__":
