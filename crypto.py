@@ -3,6 +3,8 @@
 # Returns: string
 import string
 import binascii
+import random
+import math
 
 def get_offset_letters(offset_num, alphabet):
     # dictionary that will hold the shifted value of each letter in the alphabet given an offset number
@@ -209,6 +211,8 @@ def generate_private_key(n=8):
     Q = get_Q(W)
     R = get_R(Q)
     private_key = (W, Q, R)
+    
+    return private_key
 
 # Arguments: tuple (W, Q, R) - W a length-n tuple of integers, Q and R both integers
 # Returns: tuple B - a length-n tuple of integers
@@ -219,6 +223,8 @@ def create_public_key(private_key):
 
     B = get_B(W, Q, R)
     public_key = B
+
+    return public_key
 
 
 def get_cipher_num(binary_list, public_key):
@@ -337,8 +343,8 @@ def main():
     #testing last one
 
     plaintext = "POTATOSALAD"
-    public_key = (18, 28, 54, 136, 254, 740, 1714, 3194)
-    private_key = ((9, 14, 27, 68, 127, 370, 857, 1597), 4745, 2)
+    private_key = generate_private_key()
+    public_key = create_public_key(private_key)
     encrypt = encrypt_mhkc(plaintext, public_key)
     decrypt = decrypt_mhkc(encrypt, private_key)
 
