@@ -20,8 +20,12 @@ def get_offset_letters(offset_num, alphabet):
     # dictionary that will hold the shifted value of each letter
     offset_letters = {}
     
-    # this value is the index in the alphabet at which the offset_num causes wrapping
-    wrap_point = (alphabet_length - 1) - offset_num # alphabet max index - offset_num
+    # get actual offset_num if it's originally greater than alphabet length
+    if offset_num > alphabet_length:
+        offset_num = offset_num % alphabet_length
+    
+    # this value is the index in the alphabet at which wrapping begins
+    wrap_point = alphabet_length - offset_num
     
     # for each letter get its corresponding shifted letter
     for index in range(alphabet_length):
@@ -300,25 +304,11 @@ def get_Q(W):
 def get_R(Q):
     # generate random value for R between 2 and Q-1
     R = random.randint(2, Q-1)
-    
-    if math.gcd(Q, R) == 1:
-        return R
-    else:
-        get_R(Q)
 
-"""
-    This method creates a public key B, such that B = (b_1, b_2, … b_n) where b_i = R * w_i mod Q
+    while (math.gcd(R, Q) != 1):
+        R = random.randint(2, Q-1)
 
-    Arguments: tuple, int, int
-    Returns: tuple
-"""
-def get_B(W, Q, R):
-    B = []
-    
-    for num in W:
-        B.append(R*num%Q)
-
-    return tuple(B)
+    return R
 
 """
     This method generates a private key given n = 8
@@ -336,7 +326,8 @@ def generate_private_key(n=8):
     return private_key
 
 """
-    This method generates a public key given a private key (ie. W, Q, R)
+    This method generates a public key (B) given a private key (W, Q, R), such that
+    B = (b_1, b_2, … b_n) where b_i = R * w_i mod Q
 
     Arguments: tuple (W, Q, R) - W a length-n tuple of integers, Q and R both integers
     Returns: tuple B - a length-n tuple of integers
@@ -346,9 +337,14 @@ def create_public_key(private_key):
     Q = private_key[1]
     R = private_key[2]
 
-    B = get_B(W, Q, R) # the public key
+    B = [] # the public key
+    
+    for num in W:
+        B.append(R * num % Q)
 
-    return B
+    return tuple(B)
+
+
 
 """
     This method takes in the binary representation of a character and a public key and
@@ -374,6 +370,10 @@ def get_cipher_num(binary_list, public_key):
 """
 def encrypt_mhkc(plaintext, public_key):
     encryption = []
+
+    # if plaintext is empty return empty list
+    if (plaintext == ""):
+        return encryption
     
     for letter in plaintext:
         # get ascii value of letter and convert to binary
@@ -470,6 +470,10 @@ def decrypt_mhkc(ciphertext, private_key):
 
     decryption_bytes = [] # list that will hold calculated ascii values from ciphertext
 
+    # if ciphertext is empty list return empty string
+    if ciphertext == []:
+        return ""
+
     W = private_key[0]
     Q = private_key[1]
     R = private_key[2]
@@ -498,26 +502,24 @@ def main():
     # Testing code here
     # WHAT IF GIVEN A BLANK STRING?????
 
-    #Testing Cesear
-    #encrypt = encrypt_caesar("ABC", 20)
-    #decrypt = decrypt_caesar(encrypt, 20)
-    #print(decrypt, encrypt)
+    # Testing Cesear
+    encrypt = encrypt_caesar("?AB", 492)
+    decrypt = decrypt_caesar(encrypt, 492)
+    print(decrypt, encrypt)
 
-    #Testing vingeere
-    #ciphertext = encrypt_vigenere("A", "ONEINPUT")
-    #decrypted = decrypt_vigenere(ciphertext, "ONEINPUT")
+    # Testing vingeere
+    #ciphertext = encrypt_vigenere("", "ALASDKJF")
+    #decrypted = decrypt_vigenere(ciphertext, "ALASDKJF")
     #print(decrypted, ciphertext)
 
-    #testing last one
-
-    plaintext = "POTATOSALAD"
-    private_key = generate_private_key()
-    public_key = create_public_key(private_key)
-    encrypt = encrypt_mhkc(plaintext, public_key)
-    decrypt = decrypt_mhkc(encrypt, private_key)
-
+    # Testing MHKC
+    #plaintext = "PUMPKIN SEASON"
+    #private_key = generate_private_key()
+    #public_key = create_public_key(private_key)
+    #encrypt = encrypt_mhkc(plaintext, public_key)
+    #decrypt = decrypt_mhkc(encrypt, private_key)
     #print(encrypt)
-    print(decrypt)
+    #print(decrypt)
 
     
 
