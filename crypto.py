@@ -8,7 +8,7 @@ import math
 # Caesar Cipher
 
 """
-    This method creates a dictionary with each letter of the alphabet as keys and
+    This helper function creates a dictionary with each letter of the alphabet as keys and
     their corresponding offset letter (ie. if offset_num = 3 then dict[A] = D)
 
     Arguments: int, string
@@ -37,7 +37,7 @@ def get_offset_letters(offset_num, alphabet):
     return offset_letters
 
 """
-    This method takes in a string and encrypts it by exchanging each letter for the letter in the
+    This function takes in a string and encrypts it by exchanging each letter for the letter in the
     alphabet that is at index = original index + offset.
 
     Arguments: string, integer
@@ -66,7 +66,7 @@ def encrypt_caesar(plaintext, offset):
 
 
 """
-    This method takes in a string and decrypts it by exchanging each letter for the letter in the alphabet
+    This function takes in a string and decrypts it by exchanging each letter for the letter in the alphabet
     that is at index = original index - offset (ie. reverting each letter back to the original letter).
 
     Arguments: string, integer
@@ -104,7 +104,7 @@ def decrypt_caesar(ciphertext, offset):
 # Vigenere Cipher
 
 """
-    This method takes in a letter from the plaintext and the corresponding key letter and adds their
+    This helper funcion takes in a letter from the plaintext and the corresponding key letter and adds their
     alphabet indices to get the index of the encrypted letter (alphabet string used to get indices)
 
     Arguments: string, string, string
@@ -119,8 +119,8 @@ def get_new_encrypted_letter_index(text_char, key_char, alphabet):
     return encrypted_char_index
 
 """
-    This method takes in the index of the encrypted letter and a string of the alphabet letters and
-    returns the corresponding encrypted letter in the alphabet with wrapping accounted for
+    This helper function takes in the index of the encrypted letter and a string of the alphabet letters
+    and returns the corresponding encrypted letter in the alphabet with wrapping accounted for.
 
     Arguments: int, string
     Returns: string
@@ -138,8 +138,8 @@ def get_encrypted_letter(encrypted_char_index, alphabet):
 
 
 """
-    This method takes in a string (plaintext) and a key word and encrypts the plaintext by determing the
-    index of the encrypted letter in the alphabet, and retreiving that corresponding letter.
+    This function takes in a string (plaintext) and a key word and encrypts the plaintext by determing
+    the index of the encrypted letter in the alphabet, and retreiving that corresponding letter.
 
     Arguments: string, string
     Returns: string
@@ -177,7 +177,7 @@ def encrypt_vigenere(plaintext, keyword):
 
 
 """
-    This method takes in a letter from the encrypted text and the corresponding key letter and
+    This helper function takes in a letter from the encrypted text and the corresponding key letter and
     subtracts the alphabet index of the key letter from the alphabet index of the encrypted letter
     (alphabet string used to get indices)
 
@@ -193,8 +193,8 @@ def get_new_decrypted_letter_index(cipher_char, key_char, alphabet):
     return decrypted_char_index
 
 """
-    This method takes in the index of the decrypted letter and a string of the alphabet letters and
-    returns the corresponding decrypted letter in the alphabet with wrapping accounted for
+    This helper function takes in the index of the decrypted letter and a string of the alphabet letters
+    and returns the corresponding decrypted letter in the alphabet with wrapping accounted for
 
     Arguments: int, string
     Returns: string
@@ -211,8 +211,8 @@ def get_decrypted_letter(decrypted_char_index, alphabet):
 
 
 """
-    This method takes in a string (ciphertext) and a key word and decrypts the ciphertext by determining the
-    index of the decrypted letter in the alphabet and retrieving the corresponding letter.
+    This function takes in a string (ciphertext) and a key word and decrypts the ciphertext by determining 
+    the index of the decrypted letter in the alphabet and retrieving the corresponding letter.
 
     Arguments: string, string
     Returns: string
@@ -252,7 +252,8 @@ def decrypt_vigenere(ciphertext, keyword):
 # Merkle-Hellman Knapsack Cryptosystem
 
 """
-    This method creates a super increasing sequence (starting at 1) with n = 8 numbers in the tuple
+    This helper function creates a super increasing sequence (starting at 1) with n = 8 numbers
+    in the tuple
 
     Arguments: int
     Returns: tuple
@@ -277,8 +278,8 @@ def get_W(n=8):
     return tuple(W)
 
 """
-    This method takes in the super increasing sequence, W, and returns what would be the next generated
-    number in the sequence (ie. a number, Q, that is greater than the sum of all the elements in W)
+    This helper function takes in the super increasing sequence, W, and returns what would be the next
+    generated number in the sequence (ie. a number, Q, that is greater than the sum of all the elements in W)
 
     Arguments: tuple
     Returns: int
@@ -296,7 +297,7 @@ def get_Q(W):
     return Q
 
 """
-    This method finds some integer R such that GCD(R, Q) == 1
+    This helper function finds some integer R such that GCD(R, Q) == 1
 
     Arguments: int
     Returns: int
@@ -311,7 +312,7 @@ def get_R(Q):
     return R
 
 """
-    This method generates a private key given n = 8
+    This function generates a private key given n = 8
     (charcters are 8 bit messages so W needs only n = 8 elements)  
 
     Arguments: int
@@ -326,7 +327,7 @@ def generate_private_key(n=8):
     return private_key
 
 """
-    This method generates a public key (B) given a private key (W, Q, R), such that
+    This function generates a public key (B) given a private key (W, Q, R), such that
     B = (b_1, b_2, … b_n) where b_i = R * w_i mod Q
 
     Arguments: tuple (W, Q, R) - W a length-n tuple of integers, Q and R both integers
@@ -347,7 +348,7 @@ def create_public_key(private_key):
 
 
 """
-    This method takes in the binary representation of a character and a public key and
+    This helper function takes in the binary representation of a character and a public key and
     returns the encrypted integer version of the character
 
     Arguments: list of integers (binary), tuple
@@ -363,7 +364,8 @@ def get_cipher_num(binary_list, public_key):
 
 
 """
-    This method takes in a string (plaintext) with a public key and uses the key values to encrypt the string.
+    This function takes in a string (plaintext) with a public key and uses the key values to
+    encrypt the string.
 
     Arguments: string, tuple B
     Returns: list of integers
@@ -389,7 +391,7 @@ def encrypt_mhkc(plaintext, public_key):
     return encryption
 
 """
-    This method uses Euclid's extended algorithm to find the modular inverse of 'a' mod 'm'
+    This helper function uses Euclid's extended algorithm to find the modular inverse of 'a' mod 'm'
     I got this code from GeekForGeeks: https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
 
     Arguments: int, int
@@ -425,9 +427,9 @@ def modInverse(a, m) :
     return x
 
 """
-    This method takes in R and Q (ints) and a character (really an integer) from the encrypted string and
-    calculates the inital target value (called C' in this method)later used to determine what indexes of W
-    are needed to calculate the ascii value of the encrypted character.
+    This helper function takes in R and Q (ints) and a character (really an integer) from the encrypted
+    string and calculates the inital target value (called C' in this method)later used to determine what
+    indices of W are needed to calculate the ascii value of the encrypted character.
 
     Arguments: int, int, string
     Returns: int
@@ -439,7 +441,8 @@ def get_cprime(R, Q, cipher_char, n = 8):
     return c_prime
 
 """
-    This determines what indexes of W are needed to calculate the ascii value of the encrypted character.
+    This helper function what indexes of W are needed to calculate the ascii value of the
+    encrypted character.
 
     Arguments: int, tuple
     Returns: list of integers
@@ -460,7 +463,8 @@ def get_W_values(cprime, W, n = 8):
             return indices_list
 
 """
-    This determines what indexes of W are needed to calculate the ascii value of the encrypted character.
+    This function determines what indexes of W are needed to calculate the ascii value of
+    the encrypted character.
 
     Arguments: list of integers, private key (W, Q, R) with W a tuple
     Returns: bytearray or str of plaintext
@@ -499,13 +503,10 @@ def decrypt_mhkc(ciphertext, private_key):
 
 
 def main():
-    # Testing code here
-    # WHAT IF GIVEN A BLANK STRING?????
-
     # Testing Cesear
-    encrypt = encrypt_caesar("?AB", 492)
-    decrypt = decrypt_caesar(encrypt, 492)
-    print(decrypt, encrypt)
+    #encrypt = encrypt_caesar("?AB", 492)
+    #decrypt = decrypt_caesar(encrypt, 492)
+    #print(decrypt, encrypt)
 
     # Testing vingeere
     #ciphertext = encrypt_vigenere("", "ALASDKJF")
