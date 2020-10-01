@@ -391,14 +391,32 @@ def encrypt_mhkc(plaintext, public_key):
     return encryption
 
 """
-    This helper function uses Euclid's extended algorithm to find the modular inverse of 'a' mod 'm'
+    This helper function uses Euclid's extended algorithm to find the modular multiplicative inverse
+    of 'a' under modulor 'm'
+
+
+    Based on equation: ax + by = gcd(a, b)
+        
+    Replace b with m because want to find the multiplicative inverse of ‘a’ under ‘m’
+    And we know gcd(a, b) = 1 because a and b are coprime prime:
+        ax + my = 1
+
+    Take modulo of both sides:
+        ax + my = 1 (mod m)
+
+    Remove my since my(mod m) is 0 for integer y:
+        ax = 1 (mod m)
+
+    x is the multiplicative inverse of 'a' so that's what is calculated
+
+    
     I got this code from GeekForGeeks: https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
 
     Arguments: int, int
     Returns: int
 """
 def modInverse(a, m) : 
-    m0 = m 
+    m0 = m
     y = 0
     x = 1
   
@@ -409,22 +427,22 @@ def modInverse(a, m) :
   
         # q is quotient 
         q = a // m 
-        t = m 
+        place_holder = m 
   
         # m is remainder now, process same as Euclid's algo 
         m = a % m 
-        a = t 
-        t = y 
+        a = place_holder 
+        place_holder = y 
   
         # Update x and y 
         y = x - q * y 
-        x = t
+        x = place_holder
   
     # Make x positive 
     if (x < 0) : 
         x = x + m0 
   
-    return x
+    return x # the multiplicative inverse of 'a'
 
 """
     This helper function takes in R and Q (ints) and a character (really an integer) from the encrypted
@@ -514,9 +532,11 @@ def main():
     #print(decrypted, ciphertext)
 
     # Testing MHKC
-    #plaintext = "PUMPKIN SEASON"
+    #plaintext = "PUMPKIN"
     #private_key = generate_private_key()
     #public_key = create_public_key(private_key)
+    #private_key = ((10, 14, 35, 115, 248, 677, 1413, 3644), 10242, 5)
+    #public_key = (50, 70, 175, 575, 1240, 3385, 7065, 7978)
     #encrypt = encrypt_mhkc(plaintext, public_key)
     #decrypt = decrypt_mhkc(encrypt, private_key)
     #print(encrypt)
