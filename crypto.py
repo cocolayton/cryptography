@@ -521,6 +521,7 @@ def decrypt_mhkc(ciphertext, private_key):
 
 
 def main():
+    pass
     # Testing Cesear
     #encrypt = encrypt_caesar("?AB", 492)
     #decrypt = decrypt_caesar(encrypt, 492)
